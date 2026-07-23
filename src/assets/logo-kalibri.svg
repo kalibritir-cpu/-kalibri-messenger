@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+<defs>
+<clipPath id="clip"><circle cx="200" cy="200" r="196"/></clipPath>
+</defs>
+<!-- Black background circle -->
+<circle cx="200" cy="200" r="196" fill="#0a0a0a"/>
+
+<!-- Outer green ring -->
+<circle cx="200" cy="200" r="172" fill="none" stroke="#3adb1c" stroke-width="28"/>
+
+<!-- Slight glow brushstrokes on ring -->
+<path d="M60,260 Q50,220 70,180" fill="none" stroke="rgba(100,255,80,.25)" stroke-width="4" stroke-linecap="round"/>
+<path d="M330,140 Q345,180 335,220" fill="none" stroke="rgba(100,255,80,.25)" stroke-width="4" stroke-linecap="round"/>
+
+<!-- Target rings (white) -->
+<circle cx="210" cy="210" r="100" fill="none" stroke="#fff" stroke-width="8"/>
+<circle cx="210" cy="210" r="65" fill="none" stroke="#fff" stroke-width="7"/>
+<circle cx="210" cy="210" r="30" fill="none" stroke="#fff" stroke-width="6"/>
+<!-- Center dot -->
+<circle cx="210" cy="210" r="10" fill="#fff"/>
+
+<!-- Crosshair lines -->
+<line x1="210" y1="100" x2="210" y2="320" stroke="#fff" stroke-width="5"/>
+<line x1="100" y1="210" x2="320" y2="210" stroke="#fff" stroke-width="5"/>
+
+<!-- Black fills between rings to create target look -->
+<circle cx="210" cy="210" r="96" fill="#0a0a0a"/>
+<circle cx="210" cy="210" r="100" fill="none" stroke="#fff" stroke-width="6"/>
+<circle cx="210" cy="210" r="61" fill="#0a0a0a"/>
+<circle cx="210" cy="210" r="65" fill="none" stroke="#fff" stroke-width="6"/>
+<circle cx="210" cy="210" r="26" fill="#0a0a0a"/>
+<circle cx="210" cy="210" r="30" fill="none" stroke="#fff" stroke-width="5"/>
+<circle cx="210" cy="210" r="8" fill="#fff"/>
+
+<!-- Crosshair lines (on top) -->
+<line x1="210" y1="105" x2="210" y2="315" stroke="#fff" stroke-width="4"/>
+<line x1="105" y1="210" x2="315" y2="210" stroke="#fff" stroke-width="4"/>
+
+<!-- Hummingbird silhouette (green, top-left, flying right) -->
+<g fill="#3adb1c">
+<!-- Body -->
+<ellipse cx="150" cy="140" rx="42" ry="28" transform="rotate(-25,150,140)"/>
+<!-- Head -->
+<circle cx="180" cy="112" r="22"/>
+<!-- Beak -->
+<path d="M196,106 L210,100 L198,112 Z"/>
+<!-- Eye (black dot) -->
+<circle cx="184" cy="108" r="3" fill="#0a0a0a"/>
+<!-- Upper wing -->
+<path d="M138,128 Q98,88 82,100 Q92,118 130,140 Z"/>
+<!-- Lower wing piece -->
+<path d="M134,136 Q100,108 86,116 Q96,130 128,146 Z"/>
+<!-- Tail feathers -->
+<path d="M110,160 Q72,180 62,192 Q80,184 108,166 Z"/>
+<path d="M114,155 Q80,190 68,200 Q86,188 112,164 Z"/>
+<path d="M118,152 Q88,196 78,210 Q94,194 116,162 Z"/>
+<!-- Belly highlight -->
+<ellipse cx="155" cy="152" rx="20" ry="10" transform="rotate(-20,155,152)" fill="#44ee2a" opacity=".5"/>
+</g>
+</svg>

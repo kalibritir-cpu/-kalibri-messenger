@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#25d10a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Калибри</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Клиент Supabase: работает через fetch, без внешних библиотек.
+       Ключи берутся из .env (см. .env.example) и подставляются при сборке. -->
+  <script type="module">
+    const URL_ = import.meta.env.VITE_SUPABASE_URL;
+    const KEY_ = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    let TK = null;
+    try { TK = JSON.parse(localStorage.getItem("kb_session") || "null"); } catch (e) {}
+
+    function hdrs(auth) {
+      const h = { apikey: KEY_, "Content-Type": "application/json" };
+      h.Authorization = "Bearer " + ((auth !== false && TK?.access_token) ? TK.access_token : KEY_);
+      return h;
+    }
+
+    async function req(path, opts = {}) {
+      const r = await fetch(URL_ + path, {
+        method: opts.method || "GET",
+        headers: { ...hdrs(opts.auth), ...(opts.headers || {}) },
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+      const t = await r.text();
+      let d = null;
+      try { d = t ? JSON.parse(t) : null; } catch (e) { d = t; }
+      if (!r.ok) throw new Error(d?.message || d?.error_description || d?.error || d?.msg || `HTTP ${r.status}`);
+      return d;
+    }
+
+    window.KB = {
+      url: URL_,
+      session: () => TK,
+      isAuthed: () => !!TK?.access_token,
+
+      from(table) {
+        return {
+          select: (cols, query) =>
+            req(`/rest/v1/${table}?select=${encodeURIComponent(cols || "*")}${query ? "&" + query : ""}`),
+          insert: (rows) =>
+            req(`/rest/v1/${table}`, { method: "POST", body: rows, headers: { Prefer: "return=representation" } }),
+          update: (patch, query) =>
+            req(`/rest/v1/${table}?${query}`, { method: "PATCH", body: patch, headers: { Prefer: "return=representation" } }),
+          remove: (query) => req(`/rest/v1/${table}?${query}`, { method: "DELETE" }),
+        };
+      },
+
+      rpc: (fn, args) => req(`/rest/v1/rpc/${fn}`, { method: "POST", body: args || {} }),
+
+      async signIn(email, password) {
+        const s = await req("/auth/v1/token?grant_type=password", {
+          method: "POST", auth: false,
+          body: { email: email.trim().toLowerCase(), password },
+        });
+        if (!s?.access_token) throw new Error("Не удалось войти");
+        TK = s; localStorage.setItem("kb_session", JSON.stringify(s));
+        return this.me();
+      },
+
+      async signUp(data) {
+        const s = await req("/auth/v1/signup", {
+          method: "POST", auth: false,
+          body: {
+            email: data.email.trim().toLowerCase(),
+            password: data.password,
+            data: { name: data.name, phone: data.phone || "", position: data.position || "", point: data.point || "" },
+          },
+        });
+        if (s?.access_token) { TK = s; localStorage.setItem("kb_session", JSON.stringify(s)); }
+        return s;
+      },
+
+      points: () => req("/rest/v1/rpc/public_points", { method: "POST", auth: false, body: {} }),
+
+      async me() {
+        if (!TK) return null;
+        const r = await req(`/rest/v1/profiles?select=*&id=eq.${TK.user.id}`);
+        return r?.[0] || null;
+      },
+
+      logout() { TK = null; localStorage.removeItem("kb_session"); return Promise.resolve(); },
+    };
+  </script>
+
+  <script type="module" src="/src/entry.jsx"></script>
+</body>
+</html>
