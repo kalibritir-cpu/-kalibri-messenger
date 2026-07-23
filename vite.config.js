@@ -19,7 +19,11 @@ function cssAsString() {
 }
 
 export default defineConfig({
-  plugins: [cssAsString(), react()],
+  plugins: [cssAsString(), react({ include: "**/*.{js,jsx}" })],
+
+  // Разрешаем JSX внутри .js файлов — на случай, если где-то остался
+  esbuild: { loader: "jsx", include: /src\/.*\.[jt]sx?$/ },
+  optimizeDeps: { esbuildOptions: { loader: { ".js": "jsx" } } },
 
   // ВАЖНО: для GitHub Pages укажите имя репозитория, например "/kalibri-messenger/".
   // Для Vercel, Netlify и своего домена оставьте "/".
